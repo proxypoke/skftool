@@ -36,7 +36,8 @@ first_episode = re.compile("0+1").search
 Series = namedtuple("Series",
                     ["name",
                      "directory",
-                     "image"])
+                     "image",
+                     "hashtag"])
 
 
 def play(video):
@@ -51,7 +52,13 @@ def load_series_from_directory(directory):
     image = os.path.join(
         directory,
         IMAGE_NAME)
-    return Series(name, directory, image)
+    hashtag_file = os.path.join(directory, "hashtag")
+    hashtag = "No Hashtag"
+    if os.path.isfile(hashtag_file):
+        with open(hashtag_file) as f:
+            h = f.read().strip("\n")
+            hashtag = "<a href='http://twitter.com/{}'>{}</a>".format(h, h)
+    return Series(name, directory, image, hashtag)
 
 
 def load_season(directory):
@@ -188,11 +195,12 @@ def main():
         image = QtGui.QPixmap(series_widget.series.image)
         image_label.setPixmap(image)
 
-        w.adjustSize()
+        hashtag_label = w.findChild(object, "hashtag")
+        hashtag_label.setText(series_widget.series.hashtag)
+        hashtag_label.setAlignment(QtCore.Qt.AlignHCenter |
+                                   QtCore.Qt.AlignVCenter)
 
-        text_label = w.findChild(object, "text")
-        # this must be set from code for some reason...
-        text_label.setAlignment(QtCore.Qt.AlignCenter)
+        w.adjustSize()
 
         if w.exec_():
             series_widget.play_and_remove()
