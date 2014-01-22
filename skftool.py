@@ -56,8 +56,7 @@ def load_series_from_directory(directory):
     hashtag = "No Hashtag"
     if os.path.isfile(hashtag_file):
         with open(hashtag_file) as f:
-            h = f.read().strip("\n")
-            hashtag = "<a href='http://twitter.com/{}'>{}</a>".format(h, h)
+            hashtag = f.read().strip("\n")
     return Series(name, directory, image, hashtag)
 
 
@@ -114,7 +113,7 @@ def main():
             self.setParent(None)
             del series_list[self.series]
             animu_counter.display(animu_counter.intValue() - 1)
-            reorder()
+            reorder(column_setting.value())
 
     def add_series():
         dir_ = str(QtGui.QFileDialog.getExistingDirectory(
